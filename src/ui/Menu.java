@@ -75,7 +75,6 @@ public class Menu {
 				if(lastedChar=='H') {
 					orientation = true;
 				}
-				System.out.println(row+" "+column);
 				msg = matrix.shootLaser(row, column, orientation);
 			}
 		}

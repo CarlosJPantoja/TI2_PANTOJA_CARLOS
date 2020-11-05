@@ -175,12 +175,19 @@ public class Matrix {
 			direction = true;
 		}
 		Node exit = travelLaser(orientation, direction, current);
-		System.out.println(exit.getRow()+" "+exit.getColumn());
 		String matrixDraw = toString();
-		int previusText = 3*((columns*exit.getRow())+(exit.getColumn()+1));
-		String firstPart = matrixDraw.substring(0, previusText-1);
-		String secondPart = matrixDraw.substring(previusText, matrixDraw.length());
-		String message = firstPart+"E"+secondPart;
+		matrixDraw = personalizeDraw(matrixDraw, current, "S");
+		matrixDraw = personalizeDraw(matrixDraw, exit, "E");
+		return matrixDraw;
+	}
+	
+	private String personalizeDraw(String matrixDraw, Node current, String symbol) {
+		matrixDraw = matrixDraw.replace('\n', 'L').replace((char)92, 'B');
+		int previusText = (3*columns*current.getRow())+(3*current.getColumn())+(current.getRow()+2);
+		String firstPart = matrixDraw.substring(0, previusText);
+		String secondPart = matrixDraw.substring(previusText+1, matrixDraw.length());
+		String message = firstPart+symbol+secondPart;
+		message = message.replace('L', '\n').replace('B', (char)92);
 		return message;
 	}
 	
