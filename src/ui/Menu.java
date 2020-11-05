@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
+import exceptions.*;
 import model.Matrix;
 
 public class Menu {
@@ -39,16 +40,37 @@ public class Menu {
 	}
 
 	private void startGame() throws IOException {
-		System.out.println("\nEnter: nickname columns rows mirrors");
-		String[] firstLine = br.readLine().split(" ");
-		String nickName = firstLine[0];
-		int columns = Integer.parseInt(firstLine[1]);
-		int rows = Integer.parseInt(firstLine[2]);
-		int mirrors = Integer.parseInt(firstLine[3]);
-		System.out.print("\nMatrix "+rows+"x"+columns);
-		Matrix matrix = new Matrix(rows, columns, mirrors);
-		System.out.println(matrix.toString());
-		waitCommand(matrix);
+		try {
+			System.out.println("\nEnter: nickname columns rows mirrors");
+			String[] firstLine = br.readLine().split(" ");
+			String nickName = firstLine[0];
+			int columns = Integer.parseInt(firstLine[1]);
+			if(columns>26) {
+				throw new AmountLimit("\nThe amount of columns cannot exceed 26\n");
+			} else if(columns<1) {
+				throw new AmountLimit("\nThe amount of columns cannot be less than 1\n");
+			}
+			int rows = Integer.parseInt(firstLine[2]);
+			if(rows<1) {
+				throw new AmountLimit("\nThe amount of rows cannot be less than 1\n");
+			}
+			int mirrors = Integer.parseInt(firstLine[3]);
+			if(mirrors>=(rows*columns)) {
+				throw new AmountLimit("\nThe amount of mirrors cannot be or exceed the number of cells in the matrix\n");
+			} else if(mirrors<1) {
+				throw new AmountLimit("\nThe amount of mirrors cannot be less than 1\n");
+			}
+			System.out.print("\nMatrix "+rows+"x"+columns);
+			Matrix matrix = new Matrix(rows, columns, mirrors);
+			System.out.println(matrix.toString());
+			waitCommand(matrix);
+		} catch(AmountLimit e) {
+			System.out.print(e.getMessage());
+			startGame();
+		} catch(NumberFormatException | ArrayIndexOutOfBoundsException e) {
+			System.out.print("\nYou must enter the information in the required format\n");
+			startGame();
+		}
 	}
 	
 	private void waitCommand(Matrix matrix) throws IOException {
