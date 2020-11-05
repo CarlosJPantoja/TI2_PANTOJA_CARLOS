@@ -60,25 +60,26 @@ public class Menu {
 		} else if(command.equals("cheat")) {
 			matrix.showMirrors();
 			msg = matrix.toString();
-		} else if(command.equals("LR")){
-			msg = matrix.locateMirror(true);
-		} else if(command.equals("LL")) {
-			msg = matrix.locateMirror(false);
-		} else if(command.length()>=3){
-			char lastedChar = command.charAt(command.length()-1);
-			char penultimateChar = command.charAt(command.length()-2);
-			boolean direction = (lastedChar=='H'||lastedChar=='V')&&(penultimateChar<=90&&penultimateChar>=65);
-			if(direction) {
-				int row = Integer.parseInt(command.substring(0, command.length()-2))-1;
-				int column = penultimateChar-65;
-				String orientation = "";
-				if(lastedChar=='H') {
-					orientation = "H";
-				}else {
-					orientation = "V";
-				}
-				msg = matrix.shootLaser(row, column, orientation);
+		} else if(command.length()>=4 && command.charAt(0)=='L' && (command.charAt(command.length()-1)=='R'||command.charAt(command.length()-1)=='L') && (command.charAt(command.length()-2)<=90&&command.charAt(command.length()-2)>=65)){
+			int row = Integer.parseInt(command.substring(1, command.length()-2))-1;
+			int column = command.charAt(command.length()-2)-65;
+			String orientation = "";
+			if(command.charAt(command.length()-1)=='R') {
+				orientation = "R";
+			}else {
+				orientation = "L";
 			}
+			msg = matrix.locateMirror(row, column, orientation);
+		} else if(command.length()>=3 && (command.charAt(command.length()-1)=='H'||command.charAt(command.length()-1)=='V') && (command.charAt(command.length()-2)<=90&&command.charAt(command.length()-2)>=65)){
+			int row = Integer.parseInt(command.substring(0, command.length()-2))-1;
+			int column = command.charAt(command.length()-2)-65;
+			String orientation = "";
+			if(command.charAt(command.length()-1)=='H') {
+				orientation = "H";
+			}else {
+				orientation = "V";
+			}
+			msg = matrix.shootLaser(row, column, orientation);
 		}
 		System.out.println(msg);
 		waitCommand(matrix);

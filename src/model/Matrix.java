@@ -278,9 +278,15 @@ public class Matrix {
 		return current;
 	}
 
-	public String locateMirror(boolean right) {
-		String message = "";
-		
+	public String locateMirror(int i, int j, String orientation) {
+		Node current = searchNode(i, j);
+		if((orientation.equals("R") && current.getRightM()) || (orientation.equals("L") && current.getLeftM())) {
+			current.setViewM(true);
+		} 
+		String message = toString();
+		if(!current.getViewM()) {
+			message = personalizeDraw(message, current, "X");
+		}
 		return message;
 	}
 }
