@@ -71,9 +71,11 @@ public class Menu {
 			if(direction) {
 				int row = Integer.parseInt(command.substring(0, command.length()-2))-1;
 				int column = penultimateChar-65;
-				boolean orientation = false;
+				String orientation = "";
 				if(lastedChar=='H') {
-					orientation = true;
+					orientation = "H";
+				}else {
+					orientation = "V";
 				}
 				msg = matrix.shootLaser(row, column, orientation);
 			}

@@ -163,16 +163,30 @@ public class Matrix {
 		}
 	}
 	
-	public String shootLaser(int i, int j, boolean ortn) {
+	public String shootLaser(int i, int j, String ort) {
 		Node current = searchNode(i, j);
 		boolean corner = (i==0||i+1==rows)&&(j==0||j+1==columns);
 		boolean orientation = true;
 		boolean direction = false;
-		if(i==0||i+1==rows) {
-			orientation = false;
-		}
-		if(i==0||j==0) {
-			direction = true;
+		if(!corner) {
+			if(i==0||i+1==rows) {
+				orientation = false;
+			}
+			if(i==0||j==0) {
+				direction = true;
+			}
+		} else {
+			if(ort.equals("V")) {
+				orientation = false;
+			}
+			
+			if(i==0&&j==0) {
+				direction = true;
+			} else if(i+1==rows&&j==0 && ort.equals("H")) {
+				direction = true;
+			} else if(i==0&&j+1==columns && ort.equals("V")) {
+				direction = true;
+			}
 		}
 		Node exit = travelLaser(orientation, direction, current);
 		String matrixDraw = toString();
