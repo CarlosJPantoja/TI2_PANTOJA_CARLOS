@@ -19,7 +19,6 @@ public class Matrix {
 		createMatrix();
 		assignMirrors();
 		setLinks();
-		shotLaser(0, 2, 0);
 	}
 	
 	private void createMatrix() {
@@ -164,12 +163,16 @@ public class Matrix {
 		}
 	}
 	
-	public void shotLaser(int i, int j, int h) {
+	public String shootLaser(int i, int j, boolean ortn) {
 		Node current = searchNode(i, j);
+		boolean corner = (i==0||i+1==rows)&&(j==0||j+1==0);
 		boolean horizontal = false;
 		boolean rigth = false;
 		boolean down = false;
-		if(i==0) {
+		if(corner) {
+			horizontal = ortn;
+			
+		} else if(i==0) {
 			horizontal = false;
 			down = true;
 		} else if(i+1==rows) {
@@ -182,16 +185,18 @@ public class Matrix {
 			horizontal = true;
 			rigth = false;
 		}
-		Node exit = shotLaser(horizontal, rigth, down, current);
+		//false sube o izq
+		//true baja o derc
+		Node exit = travelLaser(horizontal, rigth, down, current);
 		String matrixDraw = toString();
-		int n = columns*3*(exit.getRow());
-		int x = (3*exit.getColumn())+1;
-		String first = matrixDraw.substring(0, n+x+1);
-		String second = matrixDraw.substring(n+x+1+1, matrixDraw.length());
-		System.out.println(first+"E"+second);
+		int previusText = 3*((columns*exit.getRow())+(exit.getColumn()+1));
+		String firstPart = matrixDraw.substring(0, previusText-1);
+		String secondPart = matrixDraw.substring(previusText, matrixDraw.length());
+		String message = firstPart+"E"+secondPart;
+		return message;
 	}
 	
-	public Node shotLaser(boolean horizontal, boolean rigth, boolean down, Node current) {
+	private Node travelLaser(boolean horizontal, boolean rigth, boolean down, Node current) {
 		int i = current.getRow();
 		int j = current.getColumn();
 		if(current.getLeftM()||current.getRightM()) {
@@ -236,13 +241,13 @@ public class Matrix {
 		} else{
 			current = chosseDirection(horizontal, rigth, down, current);
 		}
-		if(!(current.getRow()==i&&current.getColumn()==j)) {
-			current = shotLaser(horizontal, rigth, down, current);
+		if(!(current.getRow()==i && current.getColumn()==j)) {
+			current = travelLaser(horizontal, rigth, down, current);
 		}
 		return current;
 	}
 	
-	public Node chosseDirection(boolean horizontal, boolean rigth, boolean down, Node current) {
+	private Node chosseDirection(boolean horizontal, boolean rigth, boolean down, Node current) {
 		if(horizontal) {
 			if(rigth) {
 				if(current.getNextN()!=null) {
@@ -287,5 +292,11 @@ public class Matrix {
 			current = searchColumnsN(i, j, current);
 		}
 		return current;
+	}
+
+	public String locateMirror(boolean right) {
+		String message = "";
+		
+		return message;
 	}
 }
