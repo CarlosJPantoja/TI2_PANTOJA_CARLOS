@@ -2,6 +2,8 @@ package model;
 
 import java.util.Random;
 
+import exceptions.AmountLimit;
+
 public class Matrix {
 	
 	private int rows;;
@@ -163,7 +165,11 @@ public class Matrix {
 		}
 	}
 	
-	public String shootLaser(int i, int j, String ort) {
+	public String shootLaser(int i, int j, String ort) throws AmountLimit{
+		boolean border = !(i==0||i+1==rows||j==0||j+1==columns);
+		if(border) {
+			throw new AmountLimit("\nCan only be shot from an edge or a corner\n");
+		}
 		Node current = searchNode(i, j);
 		boolean corner = (i==0||i+1==rows)&&(j==0||j+1==columns);
 		boolean orientation = true;
@@ -176,10 +182,12 @@ public class Matrix {
 				direction = true;
 			}
 		} else {
+			if(!(ort.equals("H")||ort.equals("V"))) {
+				throw new AmountLimit("\nAs it is a corner, it must indicate the direction of the shot\n");
+			}
 			if(ort.equals("V")) {
 				orientation = false;
 			}
-			
 			if(i==0&&j==0) {
 				direction = true;
 			} else if(i+1==rows&&j==0 && ort.equals("H")) {
@@ -288,5 +296,13 @@ public class Matrix {
 			message = personalizeDraw(message, current, "X");
 		}
 		return message;
+	}
+
+	public int getColumns() {
+		return columns;
+	}
+
+	public int getRows() {
+		return rows;
 	}
 }

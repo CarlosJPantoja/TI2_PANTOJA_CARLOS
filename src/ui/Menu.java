@@ -19,7 +19,20 @@ public class Menu {
 	}
 
 	public void showMenu() throws IOException{
-		System.out.println("BOUNCING LASERS");
+		System.out.println();
+		System.out.println("    _/_/_/      _/_/    _/    _/  _/      _/    _/_/_/  _/_/_/  _/      _/    _/_/_/   ");
+		System.out.println("   _/    _/  _/    _/  _/    _/  _/_/    _/  _/          _/    _/_/    _/  _/          ");
+		System.out.println("  _/_/_/    _/    _/  _/    _/  _/  _/  _/  _/          _/    _/  _/  _/  _/  _/_/     ");
+		System.out.println(" _/    _/  _/    _/  _/    _/  _/    _/_/  _/          _/    _/    _/_/  _/    _/      ");
+		System.out.println("_/_/_/      _/_/      _/_/    _/      _/    _/_/_/  _/_/_/  _/      _/    _/_/_/       ");
+		System.out.println("                                                                                       ");
+		System.out.println("                                                                                       ");
+		System.out.println("                                           _/          _/_/      _/_/_/  _/_/_/_/  _/_/_/      _/_/_/   ");
+		System.out.println("                                          _/        _/    _/  _/        _/        _/    _/  _/          ");
+		System.out.println("                                         _/        _/_/_/_/    _/_/    _/_/_/    _/_/_/      _/_/       ");
+		System.out.println("                                        _/        _/    _/        _/  _/        _/    _/        _/      ");
+		System.out.println("                                       _/_/_/_/  _/    _/  _/_/_/    _/_/_/_/  _/    _/  _/_/_/         ");
+		System.out.println();
 		System.out.println("[1] START");
 		System.out.println("[2] SCORES");
 		System.out.println("[3] EXIT");
@@ -63,7 +76,7 @@ public class Menu {
 			System.out.print("\nMatrix "+rows+"x"+columns);
 			Matrix matrix = new Matrix(rows, columns, mirrors);
 			System.out.println(matrix.toString());
-			waitCommand(matrix);
+			waitCommand(matrix, nickName);
 		} catch(AmountLimit e) {
 			System.out.print(e.getMessage());
 			startGame();
@@ -73,37 +86,61 @@ public class Menu {
 		}
 	}
 	
-	private void waitCommand(Matrix matrix) throws IOException {
-		String msg = "";
-		String command = br.readLine();
-		if(command.equals("menu")) {
-			showMenu();
-			return;
-		} else if(command.equals("cheat")) {
-			matrix.showMirrors();
-			msg = matrix.toString();
-		} else if(command.length()>=4 && command.charAt(0)=='L' && (command.charAt(command.length()-1)=='R'||command.charAt(command.length()-1)=='L') && (command.charAt(command.length()-2)<=90&&command.charAt(command.length()-2)>=65)){
-			int row = Integer.parseInt(command.substring(1, command.length()-2))-1;
-			int column = command.charAt(command.length()-2)-65;
-			String orientation = "";
-			if(command.charAt(command.length()-1)=='R') {
-				orientation = "R";
-			}else {
-				orientation = "L";
+	private void waitCommand(Matrix matrix, String nickName) throws IOException {
+		try {
+			String msg = "";
+			String command = br.readLine();
+			if(command.equals("menu")) {
+				System.out.println("\n");
+				showMenu();
+				return;
+			} else if(command.equals("cheat")) {
+				matrix.showMirrors();
+				msg = matrix.toString();
+			} else if(command.length()>=4 && command.charAt(0)=='L' && (command.charAt(command.length()-1)=='R'||command.charAt(command.length()-1)=='L') && (command.charAt(command.length()-2)-65<=matrix.getColumns()-1 && command.charAt(command.length()-2)-65>=0)){
+				int row = Integer.parseInt(command.substring(1, command.length()-2))-1;
+				if(row>matrix.getRows()-1 || row<0) {
+					throw new NumberFormatException();
+				}
+				int column = command.charAt(command.length()-2)-65;
+				String orientation = "";
+				if(command.charAt(command.length()-1)=='R') {
+					orientation = "R";
+				}else {
+					orientation = "L";
+				}
+				msg = matrix.locateMirror(row, column, orientation);
+			} else if(command.length()>=3 && (command.charAt(command.length()-1)=='H'||command.charAt(command.length()-1)=='V') && (command.charAt(command.length()-2)-65<=matrix.getColumns()-1 && command.charAt(command.length()-2)-65>=0)){
+				int row = Integer.parseInt(command.substring(0, command.length()-2))-1;
+				if(row>matrix.getRows()-1 || row<0) {
+					throw new NumberFormatException();
+				}
+				int column = command.charAt(command.length()-2)-65;
+				String orientation = "";
+				if(command.charAt(command.length()-1)=='H') {
+					orientation = "H";
+				}else {
+					orientation = "V";
+				}
+				msg = matrix.shootLaser(row, column, orientation);
+			} else if(command.length()>=2 && (command.charAt(command.length()-1)-65<=matrix.getColumns()-1 && command.charAt(command.length()-1)-65>=0)){
+				int row = Integer.parseInt(command.substring(0, command.length()-1))-1;
+				if(row>matrix.getRows()-1 || row<0) {
+					throw new NumberFormatException();
+				}
+				int column = command.charAt(command.length()-1)-65;
+				msg = matrix.shootLaser(row, column, "N");
+			} else {
+				throw new NumberFormatException();
 			}
-			msg = matrix.locateMirror(row, column, orientation);
-		} else if(command.length()>=3 && (command.charAt(command.length()-1)=='H'||command.charAt(command.length()-1)=='V') && (command.charAt(command.length()-2)<=90&&command.charAt(command.length()-2)>=65)){
-			int row = Integer.parseInt(command.substring(0, command.length()-2))-1;
-			int column = command.charAt(command.length()-2)-65;
-			String orientation = "";
-			if(command.charAt(command.length()-1)=='H') {
-				orientation = "H";
-			}else {
-				orientation = "V";
-			}
-			msg = matrix.shootLaser(row, column, orientation);
+			System.out.println(msg);
+			waitCommand(matrix, nickName);
+		} catch(NumberFormatException e) {
+			System.out.println("\nThe command entered is invalid\n");
+			waitCommand(matrix, nickName);
+		} catch(AmountLimit e) {
+			System.out.println(e.getMessage());
+			waitCommand(matrix, nickName);
 		}
-		System.out.println(msg);
-		waitCommand(matrix);
 	}
 }
