@@ -165,29 +165,17 @@ public class Matrix {
 	
 	public String shootLaser(int i, int j, boolean ortn) {
 		Node current = searchNode(i, j);
-		boolean corner = (i==0||i+1==rows)&&(j==0||j+1==0);
-		boolean horizontal = false;
-		boolean rigth = false;
-		boolean down = false;
-		if(corner) {
-			horizontal = ortn;
-			
-		} else if(i==0) {
-			horizontal = false;
-			down = true;
-		} else if(i+1==rows) {
-			horizontal = false;
-			down = false;
-		} else if(j==0) {
-			horizontal = true;
-			rigth = true;
-		} else if(j+1==columns) {
-			horizontal = true;
-			rigth = false;
+		boolean corner = (i==0||i+1==rows)&&(j==0||j+1==columns);
+		boolean orientation = true;
+		boolean direction = false;
+		if(i==0||i+1==rows) {
+			orientation = false;
 		}
-		//false sube o izq
-		//true baja o derc
-		Node exit = travelLaser(horizontal, rigth, down, current);
+		if(i==0||j==0) {
+			direction = true;
+		}
+		Node exit = travelLaser(orientation, direction, current);
+		System.out.println(exit.getRow()+" "+exit.getColumn());
 		String matrixDraw = toString();
 		int previusText = 3*((columns*exit.getRow())+(exit.getColumn()+1));
 		String firstPart = matrixDraw.substring(0, previusText-1);
@@ -196,60 +184,35 @@ public class Matrix {
 		return message;
 	}
 	
-	private Node travelLaser(boolean horizontal, boolean rigth, boolean down, Node current) {
+	private Node travelLaser(boolean orientation, boolean direction, Node current) {
 		int i = current.getRow();
 		int j = current.getColumn();
 		if(current.getLeftM()||current.getRightM()) {
-			if(current.getRightM()) {
-				if(horizontal) {
-					if(rigth) {
-						horizontal = false;
-						down = false;
-					} else {
-						horizontal = false;
-						down = true;
-					}
-				} else {
-					if(down) {
-						horizontal = true;
-						rigth = false;
-					} else {
-						horizontal = true;
-						rigth = true;
-					}
-				}
+			if(orientation) {
+				orientation = false;
 			} else {
-				if(horizontal) {
-					if(rigth) {
-						horizontal = false;
-						down = true;
-					} else {
-						horizontal = false;
-						down = false;
-					}
+				orientation = true;
+			}
+			if(current.getRightM()) {
+				if(direction) {
+					direction = false;
 				} else {
-					if(down) {
-						horizontal = true;
-						rigth = true;
-					} else {
-						horizontal = true;
-						rigth = false;
-					}
+					direction = true;
 				}
 			}
-			current = chosseDirection(horizontal, rigth, down, current);
+			current = chosseDirection(orientation, direction, current);
 		} else{
-			current = chosseDirection(horizontal, rigth, down, current);
+			current = chosseDirection(orientation, direction, current);
 		}
 		if(!(current.getRow()==i && current.getColumn()==j)) {
-			current = travelLaser(horizontal, rigth, down, current);
+			current = travelLaser(orientation, direction, current);
 		}
 		return current;
 	}
 	
-	private Node chosseDirection(boolean horizontal, boolean rigth, boolean down, Node current) {
-		if(horizontal) {
-			if(rigth) {
+	private Node chosseDirection(boolean orientation, boolean direction, Node current) {
+		if(orientation) {
+			if(direction) {
 				if(current.getNextN()!=null) {
 					current = current.getNextN();
 				}
@@ -259,7 +222,7 @@ public class Matrix {
 				}
 			}
 		} else {
-			if(down) {
+			if(direction) {
 				if(current.getDownN()!=null) {
 					current = current.getDownN();
 				}

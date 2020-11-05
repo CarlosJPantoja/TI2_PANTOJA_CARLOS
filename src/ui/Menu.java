@@ -59,8 +59,7 @@ public class Menu {
 			return;
 		} else if(command.equals("cheat")) {
 			matrix.showMirrors();
-			System.out.println(matrix.toString());
-			waitCommand(matrix);
+			msg = matrix.toString();
 		} else if(command.equals("LR")){
 			msg = matrix.locateMirror(true);
 		} else if(command.equals("LL")) {
@@ -71,14 +70,16 @@ public class Menu {
 			boolean direction = (lastedChar=='H'||lastedChar=='V')&&(penultimateChar<=90&&penultimateChar>=65);
 			if(direction) {
 				int row = Integer.parseInt(command.substring(0, command.length()-2))-1;
-				int column = penultimateChar-64;
+				int column = penultimateChar-65;
 				boolean orientation = false;
 				if(lastedChar=='H') {
-					orientation = false;
+					orientation = true;
 				}
-				msg = matrix.shootLaser(row, column, true);
+				System.out.println(row+" "+column);
+				msg = matrix.shootLaser(row, column, orientation);
 			}
 		}
 		System.out.println(msg);
+		waitCommand(matrix);
 	}
 }
