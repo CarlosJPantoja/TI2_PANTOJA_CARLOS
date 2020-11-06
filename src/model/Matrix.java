@@ -10,14 +10,16 @@ public class Matrix {
 	private int columns;
 	private int mirrors;
 	private int remainingM;
+	private String nickName;
 	private String msg;
 	
 	private Node firstNode;
 	
-	public Matrix(int r, int c, int k) {
+	public Matrix(int r, int c, int k, String n) {
 		rows = r;
 		columns = c;
 		mirrors = k;
+		nickName = n;
 		createMatrix();
 		assignMirrors();
 		setLinks();
@@ -145,8 +147,10 @@ public class Matrix {
 		}
 	}
 
-	public void showMirrors() {
+	public String showMirrors() {
+		msg = "";
 		revealRowsM(firstNode);
+		return msg;
 	}
 
 	private void revealRowsM(Node current) {
@@ -158,7 +162,16 @@ public class Matrix {
 	}
 
 	private void revealColumnsM(Node current) {
-		current.setViewM(true);
+		if(current.getColumn()==0) {
+			msg += "\n";
+		}
+		if(current.getRightM()) {
+			msg += "[/]";
+		} else if(current.getLeftM()) {
+			msg += "[\\]";
+		} else {
+			msg += "[ ]";
+		}
 		if(current.getNextN() != null) {
 			current = current.getNextN();
 			revealColumnsM(current);
@@ -290,6 +303,7 @@ public class Matrix {
 		Node current = searchNode(i, j);
 		if((orientation.equals("R") && current.getRightM()) || (orientation.equals("L") && current.getLeftM())) {
 			current.setViewM(true);
+			remainingM--;
 		} 
 		String message = toString();
 		if(!current.getViewM()) {
@@ -304,5 +318,10 @@ public class Matrix {
 
 	public int getRows() {
 		return rows;
+	}
+	
+	public String getRemaining() {
+		String message = "\n"+nickName+": "+remainingM+" mirrors remaining\n";
+		return message;
 	}
 }
