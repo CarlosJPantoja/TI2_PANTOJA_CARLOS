@@ -6,14 +6,18 @@ import java.io.InputStreamReader;
 
 import exceptions.*;
 import model.Matrix;
+import model.PositionsTable;
 
 public class Menu {
 
 	public static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
 	private Matrix matrix;
+	private PositionsTable table;
 
-	public Menu(){}
+	public Menu(){
+		table = new PositionsTable();
+	}
 
 	public void showMenu() throws IOException{
 		try {
@@ -41,7 +45,7 @@ public class Menu {
 				break;
 
 			case 2:
-				
+				printTable();
 				break;
 
 			case 3:
@@ -57,6 +61,14 @@ public class Menu {
 		}
 	}
 
+	private void printTable() throws IOException {
+		System.out.println("Positions table");
+		System.out.println(table.toString());
+		System.out.println("\nPress enter to back menu");
+		br.readLine();
+		showMenu();
+	}
+
 	private void startGame() throws IOException {
 		try {
 			System.out.println("\nEnter: nickname columns rows mirrors");
@@ -65,12 +77,12 @@ public class Menu {
 			int columns = Integer.parseInt(firstLine[1]);
 			if(columns>26) {
 				throw new AmountLimit("\nThe amount of columns cannot exceed 26\n");
-			} else if(columns<1) {
-				throw new AmountLimit("\nThe amount of columns cannot be less than 1\n");
+			} else if(columns<2) {
+				throw new AmountLimit("\nThe amount of columns cannot be less than 2\n");
 			}
 			int rows = Integer.parseInt(firstLine[2]);
-			if(rows<1) {
-				throw new AmountLimit("\nThe amount of rows cannot be less than 1\n");
+			if(rows<2) {
+				throw new AmountLimit("\nThe amount of rows cannot be less than 2\n");
 			}
 			int mirrors = Integer.parseInt(firstLine[3]);
 			if(mirrors>=(rows*columns)) {
@@ -95,6 +107,9 @@ public class Menu {
 		try {
 			String command = br.readLine();
 			if(command.equals("menu")) {
+				caltulateScore();
+				System.out.println("\nPress enter to back menu");
+				br.readLine();
 				System.out.println("\n");
 				showMenu();
 				return;
@@ -144,7 +159,42 @@ public class Menu {
 			msg = e.getMessage();
 			msg += matrix.getRemaining()+matrix.toString();
 		}
-		System.out.println(msg);
-		waitCommand();
+		if(matrix.getRemainingMirrors()<1) {
+			System.out.println("\nCongratulations! You've won!");
+			caltulateScore();
+			System.out.println("\nPress enter to back menu");
+			br.readLine();
+			showMenu();
+		} else {
+			System.out.println(msg);
+			waitCommand();
+		}
+	}
+	
+	private void caltulateScore() {
+		int score = 0;
+		int cells = matrix.getColumns()*matrix.getRows();
+		int locate = matrix.getMirrors()-matrix.getRemainingMirrors();
+		if(cells>30) {
+			int variable = cells/3;
+			if(matrix.getMirrors()<variable||matrix.getMirrors()>cells-variable) {
+				score = (locate*5) + (matrix.getLaserShoots()*-1) + (matrix.getFailsLocation()*-2);
+			} else {
+				score = (locate*5) + ((matrix.getLaserShoots()*-1) + (matrix.getFailsLocation()*-2))/2;
+			}
+			score += 5;
+		} else {
+			int variable = cells/3;
+			if(matrix.getMirrors()<variable||matrix.getMirrors()>cells-variable) {
+				score = (locate*3) + (matrix.getLaserShoots()*-1) + (matrix.getFailsLocation()*-2);
+			} else {
+				score = (locate*3) + ((matrix.getLaserShoots()*-1) + (matrix.getFailsLocation()*-2))/2;
+			}
+		}
+		if(score<0) {
+			score = 0;
+		}
+		System.out.println("\n"+matrix.getNickName()+", your score is: "+score+" points");
+		table.addScore(matrix.getNickName(), score, matrix.getColumns(), matrix.getRows(), matrix.getMirrors());
 	}
 }

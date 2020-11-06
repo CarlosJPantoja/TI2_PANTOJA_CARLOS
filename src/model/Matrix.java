@@ -10,6 +10,8 @@ public class Matrix {
 	private int columns;
 	private int mirrors;
 	private int remainingM;
+	private int laserShoots;
+	private int failsLocation;
 	private String nickName;
 	private String msg;
 	
@@ -213,6 +215,7 @@ public class Matrix {
 		String matrixDraw = toString();
 		matrixDraw = personalizeDraw(matrixDraw, current, "S");
 		matrixDraw = personalizeDraw(matrixDraw, exit, "E");
+		laserShoots = getLaserShoots() + 1;
 		return matrixDraw;
 	}
 	
@@ -308,6 +311,7 @@ public class Matrix {
 		String message = toString();
 		if(!current.getViewM()) {
 			message = personalizeDraw(message, current, "X");
+			failsLocation++;
 		}
 		return message;
 	}
@@ -320,8 +324,28 @@ public class Matrix {
 		return rows;
 	}
 	
+	public int getRemainingMirrors() {
+		return remainingM;
+	}
+	
+	public String getNickName() {
+		return nickName;
+	}
+	
+	public int getMirrors() {
+		return mirrors;
+	}
+
 	public String getRemaining() {
 		String message = "\n"+nickName+": "+remainingM+" mirrors remaining\n";
 		return message;
+	}
+
+	public int getLaserShoots() {
+		return laserShoots;
+	}
+
+	public int getFailsLocation() {
+		return failsLocation;
 	}
 }
